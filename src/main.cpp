@@ -5,12 +5,13 @@
 const byte ROWS = 4; 
 const byte COLS = 4;
 String sValue = " "; //valor en formato string
-int dValue; // valor en formato de digito (double)
+double dValue; // valor en formato de digito (double)
 double StoredValue1;
 double StoredValue2;
 char customKey;
 String OperationName;
 int i;
+double resultado;
 
 
 char hexaKeys[ROWS][COLS] = {
@@ -25,23 +26,41 @@ byte colPins[COLS] = {5, 4, 3, 2};
 
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
-void serial_addChar(char _char) 
+void serial_addChar(char _char) //funcion que anade numero
 {
-  if(sValue.substring(1,0) == 0)
+  // falta mejorar con un for para que ignore ceros a la izquierda
+  if(sValue.substring(1,0) == 0) 
   {
     sValue = sValue.substring(2);
     sValue = sValue + _char;
-    Serial.print(sValue);
+    Serial.println(sValue);
     dValue = sValue.toInt();
   }
   else
   {
     sValue = sValue + _char;
-    Serial.print(sValue);
+    Serial.println(sValue);
     dValue = sValue.toInt();
   }
 
   //for(i = 0,1 < sValue.length)
+}
+
+void StoreValue(double value){
+  if (StoredValue1 != 0)
+  {
+    StoredValue2 = value;
+    value = 0;
+    sValue = "";
+    Serial.println(sValue);
+  }
+  else
+  {
+    StoredValue1 = value;
+    value = 0;
+    sValue = "";
+    Serial.println(sValue);
+  }
 }
 
 void setup(){
@@ -122,7 +141,7 @@ void loop(){
       break;
 
     case '9':
-    if (sValue.length() <= 10)
+    if (sValue.length() <=  10)
       {
         serial_addChar(customKey);
       }
@@ -138,84 +157,60 @@ void loop(){
       break;
 
     case 'A': //Addition case
-    if (StoredValue1 != 0)
-    {
-      StoredValue2 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-    else
-    {
-      StoredValue1 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-      OperationName = "add";
+    StoreValue(dValue);
+    OperationName = "add";
       break;
     
     case 'B':
-    if (StoredValue1 != 0)
-    {
-      StoredValue2 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-    else
-    {
-      StoredValue1 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-      OperationName = "sub";
+    StoreValue(dValue);
+    OperationName = "sub";
       break;
 
     case 'C':
-    if (StoredValue1 != 0)
-    {
-      StoredValue2 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-    else
-    {
-      StoredValue1 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-      OperationName = "mul";
+    StoreValue(dValue);
+    OperationName = "mul";
       break;
 
     case 'D':
-    if (StoredValue1 != 0)
-    {
-      StoredValue2 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-    else
-    {
-      StoredValue1 = dValue;
-      dValue = 0;
-      sValue = String(dValue);
-      Serial.print(sValue);
-    }
-      OperationName = "div";
+    StoreValue(dValue);
+    OperationName = "div";
       break;
 
     case '*':
+    StoredValue1 = 0;
+    StoredValue2 = 0;
     dValue = 0;
-    sValue = String(dValue);
+    sValue = String(0);
     Serial.print(sValue);
       break;
 
     case '#':
+    StoreValue(dValue);
+
+    if (OperationName == "add"){
+      resultado = StoredValue1 + StoredValue2;
+    }
+    else if (OperationName == "sub"){
+      resultado = StoredValue1 - StoredValue2;
+    }
+    else if (OperationName == "mul"){
+      resultado = StoredValue1*StoredValue2;
+    }
+    else if (OperationName == "div"){
+      
+      resultado = StoredValue1 / StoredValue2;
+    }
+    else{
+      Serial.print("Unknown operation");
+    }
+
+    Serial.println(String(resultado));
+
+    StoredValue1 = 0;
+    StoredValue1 = 0;
+
+    dValue = resultado;
+
       break;
     
     default:
