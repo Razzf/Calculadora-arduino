@@ -12,9 +12,11 @@ char customKey;
 String OperationName;
 int i;
 double resultado;
+int StoredValues[] = {1,2,3};
 
 
-char hexaKeys[ROWS][COLS] = {
+char hexaKeys[ROWS][COLS] = { //declaracion de caracteres con respectiva tecla
+                              //represenado por una matriz
   {'1', '2', '3', 'A'},
   {'4', '5', '6', 'B'},
   {'7', '8', '9', 'C'},
@@ -26,10 +28,9 @@ byte colPins[COLS] = {5, 4, 3, 2};
 
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
-void serial_addChar(char _char) //funcion que anade numero
+void serial_addChar(char _char) //función que añade numero
 {
-  // falta mejorar con un for para que ignore ceros a la izquierda
-  if(sValue.substring(1,0) == 0) 
+  if(sValue.substring(1,0) == 0) //en caso de haber un cero a la izquierda lo ignora
   {
     sValue = sValue.substring(2);
     sValue = sValue + _char;
@@ -42,11 +43,9 @@ void serial_addChar(char _char) //funcion que anade numero
     Serial.println(sValue);
     dValue = sValue.toInt();
   }
-
-  //for(i = 0,1 < sValue.length)
 }
 
-void StoreValue(double value){
+void StoreValue(double value){ // función que guarda los valores con los que se hara la operación
   if (StoredValue1 != 0)
   {
     StoredValue2 = value;
@@ -69,12 +68,12 @@ void setup(){
 }
   
 void loop(){
-
-  customKey = customKeypad.getKey();
+  customKey = customKeypad.getKey(); //se lee el caracter de la tecla presionada
   
   if (customKey)
   {
-    switch (customKey)
+    switch (customKey)//se determina que caracter se presiono
+                      //en caso de ser un número, lo imprime en el lcd
     {
     case '1':
     if (sValue.length() <= 10)
@@ -156,27 +155,27 @@ void loop(){
 
       break;
 
-    case 'A': //Addition case
+    case 'A': //Addition Case
     StoreValue(dValue);
     OperationName = "add";
       break;
     
-    case 'B':
+    case 'B': //Substraction Case
     StoreValue(dValue);
     OperationName = "sub";
       break;
 
     case 'C':
-    StoreValue(dValue);
+    StoreValue(dValue); //Multiplication Case
     OperationName = "mul";
       break;
 
-    case 'D':
+    case 'D': //Division Case
     StoreValue(dValue);
     OperationName = "div";
       break;
 
-    case '*':
+    case '*': //caracter definido para limpiar pantalla y memoria
     StoredValue1 = 0;
     StoredValue2 = 0;
     dValue = 0;
@@ -184,7 +183,7 @@ void loop(){
     Serial.print(sValue);
       break;
 
-    case '#':
+    case '#': // caracter definido para realizar operacion aritmetica e imprimirla
     StoreValue(dValue);
 
     if (OperationName == "add"){
@@ -207,7 +206,7 @@ void loop(){
     Serial.println(String(resultado));
 
     StoredValue1 = 0;
-    StoredValue1 = 0;
+    StoredValue2 = 0;
 
     dValue = resultado;
 
