@@ -198,7 +198,6 @@ void loop(){
 
     case '#': // caracter definido para realizar operacion aritmetica e imprimirla
     StoreValue(dValue);
-
     if (OperationName == "add"){
       resultado = StoredValue1 + StoredValue2;
     }
@@ -220,19 +219,13 @@ void loop(){
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print(String(resultado));
-
     StoredValue1 = 0;
     StoredValue2 = 0;
-
     dValue = resultado;
-
       break;
-    
     default:
       break;
     }
-    
-    
   }
 }
 
