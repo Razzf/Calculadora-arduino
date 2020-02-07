@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Keypad.h>
+#include <Wire.h> // Library for I2C communication
+#include <LiquidCrystal_I2C.h> // Library for LCD
 
+LiquidCrystal_I2C lcd(0x3F,20, 4);
 
 const byte ROWS = 4; 
 const byte COLS = 4;
@@ -34,13 +37,17 @@ void serial_addChar(char _char) //función que añade numero
   {
     sValue = sValue.substring(2);
     sValue = sValue + _char;
-    Serial.println(sValue);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(sValue);
     dValue = sValue.toInt();
   }
   else
   {
     sValue = sValue + _char;
-    Serial.println(sValue);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(sValue);
     dValue = sValue.toInt();
   }
 }
@@ -51,20 +58,24 @@ void StoreValue(double value){ // función que guarda los valores con los que se
     StoredValue2 = value;
     value = 0;
     sValue = "";
-    Serial.println(sValue);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(sValue);
   }
   else
   {
     StoredValue1 = value;
     value = 0;
     sValue = "";
-    Serial.println(sValue);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(sValue);
   }
 }
 
 void setup(){
-  Serial.begin(9600);
-  Serial.print("0");
+  lcd.init(); //se inicializa el lcd
+  lcd.backlight();
 }
   
 void loop(){
@@ -180,7 +191,9 @@ void loop(){
     StoredValue2 = 0;
     dValue = 0;
     sValue = String(0);
-    Serial.print(sValue);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(sValue);
       break;
 
     case '#': // caracter definido para realizar operacion aritmetica e imprimirla
@@ -200,10 +213,13 @@ void loop(){
       resultado = StoredValue1 / StoredValue2;
     }
     else{
-      Serial.print("Unknown operation");
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("unknown");   
     }
-
-    Serial.println(String(resultado));
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(String(resultado));
 
     StoredValue1 = 0;
     StoredValue2 = 0;
